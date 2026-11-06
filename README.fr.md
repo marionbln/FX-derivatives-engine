@@ -37,6 +37,14 @@ toutes les options : elle varie selon le prix d'exercice. Le projet montre
 l'erreur commise si on l'ignore et qu'on utilise une seule volatilité pour
 tout.
 
+**Produits structurés.** Pricing Monte Carlo des deux produits phares du
+marché suisse : la Barrier Reverse Convertible (BRC) et l'autocall (coupon
+snowball, barrière de protection du capital). Le projet calcule les
+probabilités de rappel, la durée de vie moyenne, la probabilité de perte en
+capital, et résout le coupon "fair" qui ramène le produit à un prix cible
+(ex. 98% = 100% moins la marge de l'émetteur), comme le fait un structureur.
+Delta et vega par bump-and-reprice.
+
 ## Structure
 
 ```
@@ -48,6 +56,7 @@ src/
     hedging.py               simulation de couverture et calcul du P&L
     sensitivity.py           graphiques de sensibilité
     vol_smile.py             smile de volatilité
+    structured_products.py  BRC, autocall, coupon fair, Greeks
 
 examples/                  un script par partie, qui génère les graphiques
 outputs/                   les graphiques générés
@@ -70,10 +79,14 @@ Le projet inclut des tests qui vérifient que les résultats sont cohérents :
 le prix d'un call moins celui d'un put doit respecter une relation connue
 (parité put-call), le prix obtenu par Monte Carlo doit être proche du prix
 obtenu par la formule, et les options à barrière doivent se recomposer
-correctement pour redonner une option classique. Tous ces tests passent.
+correctement pour redonner une option classique. Pour les produits
+structurés, la BRC doit se répliquer exactement en obligation + coupons -
+put down-and-in, et le coupon fair doit bien ramener le prix à la cible.
+Les 11 tests passent.
 
 ```
 python tests/test_pricing.py
+python tests/test_structured_products.py
 ```
 
 ## Limites
